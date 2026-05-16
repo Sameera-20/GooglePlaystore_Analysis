@@ -13,22 +13,12 @@ df = pd.read_csv('googleplaystore.csv')
 # Data cleaning
 df['Rating'] = pd.to_numeric(df['Rating'], errors='coerce')
 df['Reviews'] = pd.to_numeric(df['Reviews'], errors='coerce')
-def clean_size(size):
-    if pd.isna(size):
-        return np.nan
-
-    size = str(size)
-
-    if 'M' in size:
-        return float(size.replace('M', ''))
-    elif 'k' in size:
-        return float(size.replace('k', '')) / 1024
-    else:
-        return np.nan
+df['Size'] = pd.to_numeric(df['Size'], errors='coerce')
 df['Size'] = df['Size'].apply(clean_size)
 df['Installs'] = df['Installs'].str.replace('+', '', regex=False).str.replace(',', '', regex=False)
 df['Installs'] = pd.to_numeric(df['Installs'], errors='coerce')
 df['Price'] = df['Price'].str.replace('$', '', regex=False)
+df['Price'] = df['Price'].replace('Everyone', '0')
 df['Price'] = pd.to_numeric(df['Price'], errors='coerce')
 
 # Handle Content Rating and Last Updated
