@@ -8,7 +8,7 @@ import numpy as np
 
 
 # CLEAN SIZE FUNCTION
--
+
 def clean_size(size):
     if pd.isna(size):
         return np.nan
