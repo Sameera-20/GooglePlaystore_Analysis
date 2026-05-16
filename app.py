@@ -13,11 +13,22 @@ df = pd.read_csv('googleplaystore.csv')
 # Data cleaning
 df['Rating'] = pd.to_numeric(df['Rating'], errors='coerce')
 df['Reviews'] = pd.to_numeric(df['Reviews'], errors='coerce')
-df['Size'] = pd.to_numeric(df['Size'], errors='coerce')
+def clean_size(size):
+    if pd.isna(size):
+        return np.nan
+
+    size = str(size)
+
+    if 'M' in size:
+        return float(size.replace('M', ''))
+    elif 'k' in size:
+        return float(size.replace('k', '')) / 1024
+    else:
+        return np.nan
+df['Size'] = df['Size'].apply(clean_size)
 df['Installs'] = df['Installs'].str.replace('+', '', regex=False).str.replace(',', '', regex=False)
 df['Installs'] = pd.to_numeric(df['Installs'], errors='coerce')
 df['Price'] = df['Price'].str.replace('$', '', regex=False)
-df['Price'] = df['Price'].replace('Everyone', '0')
 df['Price'] = pd.to_numeric(df['Price'], errors='coerce')
 
 # Handle Content Rating and Last Updated
@@ -37,7 +48,7 @@ bag_colors = [
 ]
 
 app = dash.Dash(__name__)
-
+server = app.server
 app.layout = html.Div([
     html.Div([
         html.H1("📱 Google Play Store Analytics Dashboard",
@@ -142,4 +153,4 @@ server = app.server
 
 # ✅ SINGLE ENTRY POINT
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(host='0.0.0.0', port=8050)
